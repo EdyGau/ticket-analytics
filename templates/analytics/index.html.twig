@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="min-h-screen bg-[#020617] text-slate-300 py-12 px-4 font-sans"
+         data-controller="import">
+        <div class="max-w-6xl mx-auto">
+            {% include 'analytics/partials/_header.html.twig' %}
+
+            <div id="results-wrapper" data-import-target="results">
+                {% if data|length > 0 %}
+                    {% include 'analytics/partials/_results.html.twig' with {'data': data} %}
+                {% else %}
+                    {% include 'analytics/partials/_empty.html.twig' %}
+                {% endif %}
+            </div>
+
+            {% include 'analytics/partials/_form.html.twig' %}
+        </div>
+    </div>
+{% endblock %}

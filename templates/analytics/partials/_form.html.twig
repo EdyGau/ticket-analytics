@@ -1,0 +1,19 @@
+<section class="max-w-xl mx-auto">
+    <form method="post"
+          enctype="multipart/form-data"
+          data-action="submit->import#submit"
+          class="bg-slate-900 p-10 rounded-[2.5rem] border border-slate-800 shadow-xl text-center">
+        <div class="relative mb-6">
+            <input type="file" name="excel_file" id="excel_file" required
+                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+            <div class="py-4 border-2 border-dashed border-slate-800 rounded-xl text-slate-500 text-xs font-bold uppercase tracking-widest">
+                <i class="fas fa-cloud-upload-alt mr-2 text-orange-500"></i>
+                Select Data Source
+            </div>
+        </div>
+        <button type="submit"
+                class="w-full py-5 bg-orange-500 text-[#020617] font-black rounded-2xl uppercase text-xs tracking-[0.2em] shadow-[0_10px_30px_rgba(249,115,22,0.3)]">
+            Execute Analysis
+        </button>
+    </form>
+</section>

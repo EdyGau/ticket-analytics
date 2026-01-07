@@ -1,0 +1,87 @@
+{% set sortedData = data|sort((a, b) => a.month <=> b.month) %}
+{% set resultData = sortedData|length > 12 ? sortedData|slice(-12) : sortedData %}
+
+{% set totalRevenue = 0 %}{% set totalTickets = 0 %}{% set totalOnlineRevenue = 0 %}{% set totalCost = 0 %}
+{% for item in resultData %}
+    {% set totalRevenue = totalRevenue + item.revenue|default(0) %}
+    {% set totalTickets = totalTickets + item.totalTickets|default(0) %}
+    {% set totalOnlineRevenue = totalOnlineRevenue + item.onlineRevenue|default(0) %}
+    {% set totalCost = totalCost + item.droplabsCost|default(0) %}
+{% endfor %}
+
+<div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 border-b border-slate-800 pb-6 animate-in fade-in duration-700">
+    <div class="flex items-center gap-2 text-slate-500 bg-slate-900/50 px-4 py-2 rounded-full border border-slate-800">
+        <i class="fas fa-file-excel text-orange-500"></i>
+        <span class="text-[10px] font-bold uppercase tracking-widest">Excel Stream: Active Analysis</span>
+    </div>
+    <div class="flex gap-8">
+        <div class="text-right">
+            <span class="block text-[9px] text-slate-500 uppercase font-black tracking-widest">Standard</span>
+            <span class="text-white font-black text-xl tabular-nums">80<span class="text-xs ml-1 text-slate-500">PLN</span></span>
+        </div>
+        <div class="text-right border-l border-slate-800 pl-8">
+            <span class="block text-[9px] text-slate-500 uppercase font-black tracking-widest">Discount</span>
+            <span class="text-white font-black text-xl tabular-nums">30<span class="text-xs ml-1 text-slate-500">PLN</span></span>
+        </div>
+        <div class="text-right border-l border-slate-800 pl-8">
+            <span class="block text-[9px] text-orange-500 uppercase font-black tracking-widest italic font-bold">Weighted Avg</span>
+            <span class="text-orange-500 font-black text-xl underline decoration-2 underline-offset-4 tabular-nums">70<span class="text-xs ml-1">PLN</span></span>
+        </div>
+    </div>
+</div>
+
+<div class="grid lg:grid-cols-4 gap-6 mb-12 animate-in slide-in-from-bottom-4 duration-700">
+    <div class="lg:col-span-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-[2.5rem] p-12 text-[#020617] shadow-[0_20px_50px_rgba(249,115,22,0.3)] relative overflow-hidden group">
+        <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+            <i class="fas fa-chart-line text-[15rem]"></i>
+        </div>
+        <div class="relative z-10">
+            <h3 class="text-xs font-black uppercase mb-2 tracking-[0.2em] opacity-80 italic">Annual Revenue Strategy (LTM)</h3>
+            <p class="text-8xl font-black tracking-tighter mb-10 leading-none tabular-nums">
+                {{ totalRevenue|number_format(2, ',', ' ') }} <span class="text-3xl font-light italic opacity-70">PLN</span>
+            </p>
+            <div class="bg-black/10 backdrop-blur-md p-8 rounded-2xl border border-black/5 max-w-2xl">
+                <p class="text-base font-bold leading-relaxed opacity-90">
+                    Calculated fiscal period:
+                    <span class="bg-black text-white px-3 py-1 rounded-lg text-sm">{{ resultData|first.month|date('M Y')|upper }}</span>
+                    to
+                    <span class="bg-black text-white px-3 py-1 rounded-lg text-sm">{{ resultData|last.month|date('M Y')|upper }}</span>.
+                    <br><br>
+                    <span class="text-sm italic font-medium">Model: Monthly Fee + MAX(2.5% Commission OR 1.1 PLN Floor). Est. Cost: {{ totalCost|number_format(2, ',', ' ') }} PLN.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-xl flex flex-col justify-end">
+        <span class="text-[10px] text-orange-500 font-black uppercase mb-2 tracking-widest italic">Aggregated Volume</span>
+        <p class="text-6xl font-black text-white tracking-tighter leading-none tabular-nums">{{ totalTickets|number_format(0, '', ' ') }}</p>
+        <p class="text-xs font-bold text-slate-500 mt-4 uppercase tracking-widest border-t border-slate-800 pt-4">Tickets Processed</p>
+    </div>
+</div>
+
+<div class="bg-slate-900/50 rounded-3xl border border-slate-800/50 overflow-hidden shadow-2xl mb-16 backdrop-blur-sm">
+    <table class="w-full text-left border-collapse">
+        <thead>
+        <tr class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] bg-slate-900/80">
+            <th class="px-10 py-6">Fiscal Month</th>
+            <th class="px-10 py-6 text-right">Digital Sales</th>
+            <th class="px-10 py-6 text-right">Gross Volume</th>
+            <th class="px-10 py-6 text-right text-orange-500 italic bg-orange-500/5">Calculated Revenue</th>
+        </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/30">
+        {% for item in sortedData %}
+            {% set isExcluded = item not in resultData %}
+            <tr class="{% if isExcluded %}opacity-25 bg-slate-950/50{% else %}hover:bg-white/[0.02]{% endif %} transition-all group">
+                <td class="px-10 py-6">
+                    <span class="font-black text-white uppercase tabular-nums tracking-wider">{{ item.month|date('F Y') }}</span>
+                    {% if isExcluded %}<span class="ml-3 text-[8px] bg-slate-800 px-2 py-0.5 rounded text-slate-500 uppercase font-black">Excluded</span>{% endif %}
+                </td>
+                <td class="px-10 py-6 text-right tabular-nums text-slate-400">{{ item.onlineTickets|number_format(0, '', ' ') }}</td>
+                <td class="px-10 py-6 text-right tabular-nums text-slate-400">{{ item.totalTickets|number_format(0, '', ' ') }}</td>
+                <td class="px-10 py-6 text-right font-black text-orange-500 italic tabular-nums bg-orange-500/[0.02]">{{ item.revenue|number_format(2, ',', ' ') }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
