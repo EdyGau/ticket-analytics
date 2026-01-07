@@ -12,11 +12,11 @@
 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 border-b border-slate-800 pb-6 animate-in fade-in duration-700">
     <div class="flex items-center gap-2 text-slate-500 bg-slate-900/50 px-4 py-2 rounded-full border border-slate-800">
         <i class="fas fa-file-excel text-orange-500"></i>
-        <span class="text-[10px] font-bold uppercase tracking-widest">Excel Stream: Active Analysis</span>
+        <span class="text-[10px] font-bold uppercase tracking-widest tabular-nums">Excel Data Stream: Analysis Active</span>
     </div>
     <div class="flex gap-8">
         <div class="text-right">
-            <span class="block text-[9px] text-slate-500 uppercase font-black tracking-widest">Standard</span>
+            <span class="block text-[9px] text-slate-500 uppercase font-black tracking-widest">Normal</span>
             <span class="text-white font-black text-xl tabular-nums">80<span class="text-xs ml-1 text-slate-500">PLN</span></span>
         </div>
         <div class="text-right border-l border-slate-800 pl-8">
@@ -42,18 +42,17 @@
             </p>
             <div class="bg-black/10 backdrop-blur-md p-8 rounded-2xl border border-black/5 max-w-2xl">
                 <p class="text-base font-bold leading-relaxed opacity-90">
-                    Calculated fiscal period:
-                    <span class="bg-black text-white px-3 py-1 rounded-lg text-sm">{{ resultData|first.month|date('M Y')|upper }}</span>
-                    to
+                    Fiscal Analysis Period:
+                    <span class="bg-black text-white px-3 py-1 rounded-lg text-sm">{{ resultData|first.month|date('M Y')|upper }}</span> to
                     <span class="bg-black text-white px-3 py-1 rounded-lg text-sm">{{ resultData|last.month|date('M Y')|upper }}</span>.
                     <br><br>
-                    <span class="text-sm italic font-medium">Model: Monthly Fee + MAX(2.5% Commission OR 1.1 PLN Floor). Est. Cost: {{ totalCost|number_format(2, ',', ' ') }} PLN.</span>
+                    <span class="text-sm italic font-medium">Mathematical Model: Monthly Subscription + Variable commission floor. Est. Total Cost: {{ totalCost|number_format(2, ',', ' ') }} PLN netto.</span>
                 </p>
             </div>
         </div>
     </div>
     <div class="bg-slate-900 rounded-[2.5rem] p-10 border border-slate-800 shadow-xl flex flex-col justify-end">
-        <span class="text-[10px] text-orange-500 font-black uppercase mb-2 tracking-widest italic">Aggregated Volume</span>
+        <span class="text-[10px] text-orange-500 font-black uppercase mb-2 tracking-widest italic">Volume Summary</span>
         <p class="text-6xl font-black text-white tracking-tighter leading-none tabular-nums">{{ totalTickets|number_format(0, '', ' ') }}</p>
         <p class="text-xs font-bold text-slate-500 mt-4 uppercase tracking-widest border-t border-slate-800 pt-4">Tickets Processed</p>
     </div>

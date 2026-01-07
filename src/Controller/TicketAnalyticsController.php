@@ -12,7 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Handles user requests for financial analytics dashboard and data stream processing.
+ * Entry point for financial dashboard interactions.
+ * Uses transient session state to handle data display.
  */
 final class TicketAnalyticsController extends AbstractController
 {
@@ -33,8 +34,9 @@ final class TicketAnalyticsController extends AbstractController
                     }
                 } catch (InvalidAnalyticsDataException $e) {
                     $this->addFlash('error', $e->getMessage());
-
-                    return $request->isXmlHttpRequest() ? new Response($e->getMessage(), 400) : $this->redirectToRoute('app_analytics');
+                    if ($request->isXmlHttpRequest()) {
+                        return new Response($e->getMessage(), 400);
+                    }
                 }
             }
 
@@ -42,6 +44,7 @@ final class TicketAnalyticsController extends AbstractController
         }
 
         $data = $session->get('analytics_data', []);
+
         if (!empty($data)) {
             $session->remove('analytics_data');
         }

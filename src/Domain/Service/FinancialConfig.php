@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Service;
 
 /**
- * Global financial business rules for revenue modeling.
+ * Centralized financial business rules for Droplabs revenue modeling.
  */
 final class FinancialConfig
 {

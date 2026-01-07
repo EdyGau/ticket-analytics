@@ -12,13 +12,12 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Service responsible for orchestrating the Excel data import process.
- * It transforms raw spreadsheet rows into normalized financial data collections.
+ * Transforms raw spreadsheet rows into normalized financial data collections.
  */
 final class TicketAnalyticsImportService
 {
     /**
      * @return array<int, array<string, mixed>>
-     *
      * @throws InvalidAnalyticsDataException
      */
     public function importToCollection(UploadedFile $file): array
@@ -47,6 +46,9 @@ final class TicketAnalyticsImportService
         return $collection;
     }
 
+    /**
+     * Parses a single logical row and applies Droplabs commission logic.
+     */
     private function parseRow(mixed $year, mixed $monthName, mixed $on, mixed $tot): ?array
     {
         $month = Month::fromPolishName((string) $monthName);
@@ -64,15 +66,20 @@ final class TicketAnalyticsImportService
         $revenue = $total * FinancialConfig::AVG_TICKET_PRICE;
         $onlineRevenue = $online * FinancialConfig::AVG_TICKET_PRICE;
 
-        $commission = max($onlineRevenue * FinancialConfig::COMMISSION_RATE, $online * FinancialConfig::MIN_COMMISSION_PER_TICKET);
+        $commissionPerTicket = max(
+            FinancialConfig::AVG_TICKET_PRICE * FinancialConfig::COMMISSION_RATE,
+            FinancialConfig::MIN_COMMISSION_PER_TICKET
+        );
+
+        $totalMonthlyCost = FinancialConfig::MONTHLY_SUBSCRIPTION_FEE + ($total * $commissionPerTicket);
 
         return [
-            'month' => $year.'-'.$month->value,
+            'month' => $year . '-' . $month->value,
             'onlineTickets' => $online,
             'totalTickets' => $total,
             'revenue' => $revenue,
             'onlineRevenue' => $onlineRevenue,
-            'droplabsCost' => FinancialConfig::MONTHLY_SUBSCRIPTION_FEE + $commission,
+            'droplabsCost' => $totalMonthlyCost,
         ];
     }
 }
